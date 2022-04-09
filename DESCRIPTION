@@ -1,0 +1,14 @@
+Package: UsefulR
+Title: Useful Functions for Enhanced Productivity
+Version: 0.0.0.9000
+Authors@R: 
+    person("James", "Hardy", , "jrh-dev@protonmail.com", role = c("aut", "cre"))
+Description: A collection of useful functions for enhanced productivity.
+Imports: 
+    data.table,
+    glue,
+    openxlsx
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
