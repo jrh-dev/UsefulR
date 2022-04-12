@@ -25,9 +25,15 @@ ReadIt = function(...) {
     UseMethod("ReadIt", tar)
 }
 
+.CleanPath = function(x) {
+    
+    return(gsub("\\\\", "/", x))
+    
+}
+
 ReadIt.csv = function(...) {
 
-    constr = glue::glue('data.table::fread("{as.character(tar)}", keepLeadingZeros = TRUE)')
+    constr = .CleanPath(glue::glue('data.table::fread("{as.character(tar)}", keepLeadingZeros = TRUE)'))
 
     print("Replace {ReadIt} call with the following code for reproducibility;")
     print(noquote(constr))
@@ -38,7 +44,7 @@ ReadIt.csv = function(...) {
 
 ReadIt.zip = function(...) {
 
-    constr = glue::glue("data.table::fread('", 'unzip -p "{as.character(tar)}"', "', keepLeadingZeros = TRUE)")
+    constr = .CleanPath(glue::glue("data.table::fread('", 'unzip -p "{as.character(tar)}"', "', keepLeadingZeros = TRUE)"))
 
     print("Replace {ReadIt} call with the following code for reproducibility;")
     print(noquote(constr))
@@ -49,7 +55,7 @@ ReadIt.zip = function(...) {
 
 ReadIt.rds = function(...) {
 
-    constr = glue::glue('readRDS("{as.character(tar)}")')
+    constr = .CleanPath(glue::glue('readRDS("{as.character(tar)}")'))
 
     print("Replace {ReadIt} call with the following code for reproducibility;")
     print(noquote(constr))
@@ -60,7 +66,7 @@ ReadIt.rds = function(...) {
 
 ReadIt.xlsx = function(...) {
 
-    constr = glue::glue('openxlsx::read.xlsx("{as.character(tar)}")')
+    constr = .CleanPath(glue::glue('openxlsx::read.xlsx("{as.character(tar)}")'))
 
     print("Replace {ReadIt} call with the following code for reproducibility;")
     print(noquote(constr))
