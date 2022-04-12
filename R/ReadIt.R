@@ -1,20 +1,20 @@
 #' Interactively select and read multiple filetypes using default options.
-#' 
+#'
 #' @description Interactively select (utilising {file.choose()}) and read
 #'  multiple filetypes using default options. The function reads the file
 #'  and prints the function used to do so. The printed function can be
 #'  used to replace the call to {ReadIt()} to be used in reproducible
 #'  code.
-#' 
+#'
 #' @importFrom tools file_ext
 #' @importFrom glue glue
 #' @importFrom data.table fread
 #' @importFrom openxlsx read.xlsx
-#' 
+#'
 #' @param ... further arguments to be passed.
-#' 
+#'
 #' @return a data.frame containing the data which has been read.
-#' 
+#'
 #' @export
 ReadIt = function(...) {
 
@@ -25,12 +25,14 @@ ReadIt = function(...) {
     UseMethod("ReadIt", tar)
 }
 
+#' @export
 .CleanPath = function(x) {
-    
+
     return(gsub("\\\\", "/", x))
-    
+
 }
 
+#' @export
 ReadIt.csv = function(...) {
 
     constr = .CleanPath(glue::glue('data.table::fread("{as.character(tar)}", keepLeadingZeros = TRUE)'))
@@ -42,6 +44,7 @@ ReadIt.csv = function(...) {
 
 }
 
+#' @export
 ReadIt.zip = function(...) {
 
     constr = .CleanPath(glue::glue("data.table::fread('", 'unzip -p "{as.character(tar)}"', "', keepLeadingZeros = TRUE)"))
@@ -53,6 +56,7 @@ ReadIt.zip = function(...) {
 
 }
 
+#' @export
 ReadIt.rds = function(...) {
 
     constr = .CleanPath(glue::glue('readRDS("{as.character(tar)}")'))
@@ -64,6 +68,7 @@ ReadIt.rds = function(...) {
 
 }
 
+#' @export
 ReadIt.xlsx = function(...) {
 
     constr = .CleanPath(glue::glue('openxlsx::read.xlsx("{as.character(tar)}")'))
