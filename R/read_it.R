@@ -3,7 +3,7 @@
 #' @description Interactively select (utilising {file.choose()}) and read
 #'  multiple filetypes using default options. The function reads the file
 #'  and prints the function used to do so. The printed function can be
-#'  used to replace the call to {ReadIt()} to be used in reproducible
+#'  used to replace the call to {read_it()} to be used in reproducible
 #'  code.
 #'
 #' @importFrom tools file_ext
@@ -16,28 +16,28 @@
 #' @return a data.frame containing the data which has been read.
 #'
 #' @export
-ReadIt = function(...) {
+read_it = function(...) {
 
     tar = file.choose()
 
     class(tar) = tolower(tools::file_ext(tar))
 
-    UseMethod("ReadIt", tar)
+    UseMethod("read_it", tar)
 }
 
 #' @export
-.CleanPath = function(x) {
+.clean_path = function(x) {
 
     return(gsub("\\\\", "/", x))
 
 }
 
 #' @export
-ReadIt.csv = function(...) {
+read_it.csv = function(...) {
 
-    constr = .CleanPath(glue::glue('data.table::fread("{as.character(tar)}", keepLeadingZeros = TRUE)'))
+    constr = .clean_path(glue::glue('data.table::fread("{as.character(tar)}", keepLeadingZeros = TRUE)'))
 
-    print("Replace {ReadIt} call with the following code for reproducibility;")
+    print("Replace {read_it} call with the following code for reproducibility;")
     print(noquote(constr))
 
     return(eval(parse(text = constr)))
@@ -45,11 +45,11 @@ ReadIt.csv = function(...) {
 }
 
 #' @export
-ReadIt.zip = function(...) {
+read_it.zip = function(...) {
 
-    constr = .CleanPath(glue::glue("data.table::fread('", 'unzip -p "{as.character(tar)}"', "', keepLeadingZeros = TRUE)"))
+    constr = .clean_path(glue::glue("data.table::fread('", 'unzip -p "{as.character(tar)}"', "', keepLeadingZeros = TRUE)"))
 
-    print("Replace {ReadIt} call with the following code for reproducibility;")
+    print("Replace {read_it} call with the following code for reproducibility;")
     print(noquote(constr))
 
     return(eval(parse(text = constr)))
@@ -57,11 +57,11 @@ ReadIt.zip = function(...) {
 }
 
 #' @export
-ReadIt.rds = function(...) {
+read_it.rds = function(...) {
 
-    constr = .CleanPath(glue::glue('readRDS("{as.character(tar)}")'))
+    constr = .clean_path(glue::glue('readRDS("{as.character(tar)}")'))
 
-    print("Replace {ReadIt} call with the following code for reproducibility;")
+    print("Replace {read_it} call with the following code for reproducibility;")
     print(noquote(constr))
 
     return(eval(parse(text = constr)))
@@ -69,11 +69,11 @@ ReadIt.rds = function(...) {
 }
 
 #' @export
-ReadIt.xlsx = function(...) {
+read_it.xlsx = function(...) {
 
-    constr = .CleanPath(glue::glue('openxlsx::read.xlsx("{as.character(tar)}")'))
+    constr = .clean_path(glue::glue('openxlsx::read.xlsx("{as.character(tar)}")'))
 
-    print("Replace {ReadIt} call with the following code for reproducibility;")
+    print("Replace {read_it} call with the following code for reproducibility;")
     print(noquote(constr))
 
     return(eval(parse(text = constr)))
