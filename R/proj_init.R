@@ -23,7 +23,6 @@
 #' @importFrom renv init
 #' @importFrom utils data
 #' @importFrom glue glue
-#' @importFrom usethis use_testthat
 #' 
 #' @param name the name of the project.
 #' @param dir the directory in which to create the project.
@@ -42,40 +41,42 @@ proj_init <- function(name, dir, umask = "002", use_renv = TRUE,
     
     dir.create(parent)
     
+    dirs <- c("config", "data", "logs", "R", "src", "tests")
+    
     message("Creating dir structure...\n\n")
-    dir.create(glue::glue("{parent}/config"))
-    dir.create(glue::glue("{parent}/data"))
-    dir.create(glue::glue("{parent}/logs"))
-    dir.create(glue::glue("{parent}/R"))
-    dir.create(glue::glue("{parent}/src"))
-    dir.create(glue::glue("{parent}/tests"))
+    
+    lapply(dirs, function(x) {
+        dir.create(file.path(parent, x))
+        return(invisible())
+        })
     
     message("Creating standard files...\n\n")
-    file.create(glue::glue("{parent}/README.md"))
-    file.create(glue::glue("{parent}/run.R"))
-    file.create(glue::glue("{parent}/.gitignore"))
-    file.create(glue::glue("{parent}/{name}.Rproj"))
     
-    utils::data("default_rproj", package = "UsefulR", envir = environment())
+    files <- c("README.md", "run.R", ".gitignore", glue::glue("{name}.Rproj"))
+    
+    lapply(files, function(x) {
+        file.create(file.path(parent, x))
+        return(invisible())
+        })
     
     message("Applying default configurations...\n\n")
     
-    Cont_rproj <- glue::glue(
-        "Version: {default_rproj['Version']}\n\n",
-        "RestoreWorkspace: {default_rproj['RestoreWorkspace']}\n",
-        "SaveWorkspace: {default_rproj['SaveWorkspace']}\n",
-        "AlwaysSaveHistory: {default_rproj['AlwaysSaveHistory']}\n\n",
-        "EnableCodeIndexing: {default_rproj['EnableCodeIndexing']}\n",
-        "UseSpacesForTab: {default_rproj['UseSpacesForTab']}\n",
-        "NumSpacesForTab: {default_rproj['NumSpacesForTab']}\n",
-        "Encoding: {default_rproj['Encoding']}\n\n",
-        "RnwWeave: {default_rproj['RnwWeave']}\n",
-        "LaTeX: {default_rproj['LaTeX']}",
+    conf_rproj <- glue::glue(
+        "Version: 1.0\n\n",
+        "RestoreWorkspace: Default\n",
+        "SaveWorkspace: Default\n",
+        "AlwaysSaveHistory: Default\n\n",
+        "EnableCodeIndexing: Yes\n",
+        "UseSpacesForTab: Yes\n",
+        "NumSpacesForTab: 4\n",
+        "Encoding: UTF-8\n\n",
+        "RnwWeave: Knitr\n",
+        "LaTeX: pdfLaTeX"
     )
     
-    writeLines(Cont_rproj, glue::glue("{parent}/{name}.Rproj"))
+    writeLines(conf_rproj, glue::glue("{parent}/{name}.Rproj"))
     
-    cont_gitig <- glue::glue(
+    conf_gitig <- glue::glue(
         "# History files\n",
         ".Rhistory\n\n",
         "# Session Data files\n",
@@ -83,16 +84,19 @@ proj_init <- function(name, dir, umask = "002", use_renv = TRUE,
         "# User-specific files\n",
         ".Ruserdata\n\n",
         "# RStudio files\n",
-        ".Rproj.user\n\n"
+        ".Rproj.user\n\n",
+        "# Project dirs\n",
+        "data/**",
+        "logs/**"
     )
     
-    writeLines(cont_gitig, glue::glue("{parent}/.gitignore"))
+    writeLines(conf_gitig, glue::glue("{parent}/.gitignore"))
     
     message("Initializing GIT...\n\n")
-    if (use_git) try(system(glue::glue("git init {parent}")))
+    if (use_git) try(system(glue::glue('git init "{parent}"')))
     
     message("Initializing renv...\n\n")
-    if (use_renv) try(renv::init(glue::glue("{parent}")))
+    if (use_renv) try({options(renv.consent = TRUE); renv::init(parent)})
     
     message(glue::glue("\n\nProject {name} created at {parent}/{name}"))
     
