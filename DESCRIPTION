@@ -9,6 +9,7 @@ Imports:
     glue,
     openxlsx,
     renv,
+    rstudioapi,
     usethis
 License: MIT + file LICENSE
 Encoding: UTF-8
